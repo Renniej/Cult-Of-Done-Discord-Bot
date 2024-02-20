@@ -8,11 +8,9 @@ import kotlin.time.Duration.Companion.minutes
 
 fun inputDate() : Instant {
 
-
     var minutes : Int? = null
 
     do {
-
         println("Input number of minutes later you'd like to recieve this notificaiton")
 
 
@@ -23,7 +21,6 @@ fun inputDate() : Instant {
             minutes < 1 -> println("number must be greater than 1")
 
         }
-
     } while (minutes == null || minutes < 1)
 
 
@@ -44,9 +41,8 @@ fun main() {
     title = readln()
     println("Enter reminder description")
     desc = readln()
+    date = inputDate()
 
-
-    date =
 
     manager.addReminder(title, desc, date)
 
