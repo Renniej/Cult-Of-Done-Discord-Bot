@@ -13,7 +13,7 @@ open class Reminder(override val title : String, override val desc : String, ove
     }
 
     fun fireReminder(){
-        eventListener?.onReminderFired(this)
+        eventListener?.fireReminder(this)
     }
 
     override fun toString(): String {
