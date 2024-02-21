@@ -6,6 +6,9 @@ import reminders.ReminderListener
 class ReminderManager {
 
     private val reminders = mutableListOf<Reminder>()
+    private var onFiredFunc : ((reminder : IReminder) -> Unit?)? = null
+
+
     private val listener = ReminderListener().apply {
         setOnReminderFired(this@ReminderManager::onReminderFired)
     }
@@ -22,8 +25,11 @@ class ReminderManager {
     }
 
 
+    fun setOnReminderFired(func : (reminder : IReminder)->Unit) {
+        onFiredFunc = func
+    }
     private fun onReminderFired(reminder : IReminder) {
-        println(reminder)
+        this.onFiredFunc?.let { it(reminder) }
     }
 
 
