@@ -1,18 +1,32 @@
+import dev.kord.common.serialization.DurationInSeconds
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import rennie.rennie.IReminder
-import rennie.rennie.ReminderListener
+import reminders.rennie.IReminder
+import reminders.ReminderListener
+import java.util.EventListener
+import java.util.Timer
+import kotlin.concurrent.timerTask
+import kotlin.time.Duration
 
 
-open class Reminder(override val title : String, override val desc : String, override val time : Instant) : IReminder {
+open class Reminder(override val title : String, override val desc : String, override val time : Instant) : IReminder  {
 
+    private val timer = Timer()
     private var eventListener : ReminderListener? = null
 
+    init {
 
-    fun setListener(listener : ReminderListener){
+        val dur : Duration = time.minus(Clock.System.now())
+
+        timer.schedule(timerTask {fireReminder()
+        }, dur.inWholeMilliseconds)
+    }
+
+    fun setEventListener(listener  : ReminderListener) {
         eventListener = listener
     }
 
-    fun fireReminder(){
+    private fun fireReminder(){
         eventListener?.fireReminder(this)
     }
 

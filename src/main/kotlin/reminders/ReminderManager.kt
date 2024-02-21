@@ -1,6 +1,6 @@
 import kotlinx.datetime.Instant
-import rennie.rennie.IReminder
-import rennie.rennie.ReminderListener
+import reminders.rennie.IReminder
+import reminders.ReminderListener
 
 
 class ReminderManager {
@@ -11,13 +11,14 @@ class ReminderManager {
     }
 
 
-    fun addReminder(title : String, desc : String, date : Instant) {
+    fun addReminder(title : String, desc : String, date : Instant)  {
 
         val reminder = Reminder(title, desc, date).apply {
-            setListener(listener)
+            setEventListener(listener)
         }
 
         reminders += reminder
+
     }
 
 

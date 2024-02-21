@@ -1,5 +1,6 @@
-package rennie.rennie
+package reminders
 
+import reminders.rennie.IReminder
 
 
 class ReminderListener {

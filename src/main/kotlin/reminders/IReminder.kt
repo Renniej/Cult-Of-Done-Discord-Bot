@@ -1,4 +1,4 @@
-package rennie.rennie
+package reminders.rennie
 
 import kotlinx.datetime.Instant
 
