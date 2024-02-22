@@ -2,17 +2,14 @@ package reminders
 
 import Reminder
 import ReminderManager
-import dev.kord.common.annotation.KordPreview
-import dev.kord.common.entity.CommandArgument
+import com.jessecorbett.diskord.bot.bot
+import com.jessecorbett.diskord.bot.classicCommands
+import com.jessecorbett.diskord.bot.interaction.interactions
+
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import me.jakejmattson.discordkt.arguments.AnyArg
-import me.jakejmattson.discordkt.arguments.IntegerArg
-import me.jakejmattson.discordkt.arguments.StringArgument
-import me.jakejmattson.discordkt.commands.CommandSetBuilder
-import me.jakejmattson.discordkt.commands.commands
-import me.jakejmattson.discordkt.dsl.Bot
-import me.jakejmattson.discordkt.dsl.bot
+import reminders.discordBot.Bot
+
 import java.io.File
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
@@ -59,6 +56,7 @@ fun managerTest() {
 
 val manager = ReminderManager()
 
+/*
 
 fun reminder() = commands("Test") {
 
@@ -72,19 +70,32 @@ fun reminder() = commands("Test") {
         }
     }
 }
+*/
 
 
-fun main() {
+suspend fun main(args : Array<String>) {
 
-    val file = File("C:\\Users\\Rennie\\IdeaProjects\\Cult-Of-Done-Discord-Bot\\src\\main\\botToken.txt")
-    val token = file.readText()
-
-    val bot : Bot
+    val token = args[0]
+    val manager = ReminderManager()
 
     bot(token) {
-        prefix { "+" }
+        interactions {
+            slashCommand("reminder", "sets reminder") {
+                val title by stringParameter("title", "reminder title", optional = false)
+                val desc by stringParameter("description" ,"reminder description", optional = false)
+                callback {
 
+                    manager.addReminder(title!!,desc!!, Clock.System.now().plus(5.seconds))
+
+                    respond {
+                        content = "Reminder Added"
+                    }
+                }
+            }
+
+        }
     }
+
 
 
 
