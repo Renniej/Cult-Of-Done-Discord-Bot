@@ -1,18 +1,16 @@
 package reminders
 
-import Reminder
 import ReminderManager
+import com.jessecorbett.diskord.api.channel.ChannelClient
 import com.jessecorbett.diskord.bot.bot
-import com.jessecorbett.diskord.bot.classicCommands
 import com.jessecorbett.diskord.bot.interaction.interactions
+import com.jessecorbett.diskord.internal.client.RestClient
+import com.jessecorbett.diskord.util.sendMessage
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import reminders.discordBot.Bot
+import reminders.diskord_reminders.DiscordRemainderManager
 
-import java.io.File
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 
@@ -54,7 +52,7 @@ fun managerTest() {
     manager.addReminder(title, desc, date)
 }
 
-val manager = ReminderManager()
+
 
 /*
 
@@ -75,10 +73,13 @@ fun reminder() = commands("Test") {
 
 suspend fun main(args : Array<String>) {
 
-    val token = args[0]
-    val manager = ReminderManager()
+    val botToken = args[0]
+    val channelId = "1209964221253812334"
+    val manager = DiscordRemainderManager(botToken,channelId)
 
-    bot(token) {
+
+
+    bot(botToken) {
         interactions {
             slashCommand("reminder", "sets reminder") {
                 val title by stringParameter("title", "reminder title", optional = false)

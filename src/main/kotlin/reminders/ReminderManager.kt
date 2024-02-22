@@ -3,10 +3,10 @@ import reminders.rennie.IReminder
 import reminders.ReminderListener
 
 
-class ReminderManager {
+open class ReminderManager {
 
     private val reminders = mutableListOf<Reminder>()
-    private var onFiredFunc : ((reminder : IReminder) -> Unit?)? = null
+    protected var onFiredFunc : ((reminder : IReminder) -> Unit?)? = null
 
 
     private val listener = ReminderListener().apply {
@@ -25,7 +25,7 @@ class ReminderManager {
     }
 
 
-    fun setOnReminderFired(func : (reminder : IReminder)->Unit) {
+   open fun setOnReminderFired(func : (reminder : IReminder)->Unit) {
         onFiredFunc = func
     }
     private fun onReminderFired(reminder : IReminder) {
