@@ -10,11 +10,8 @@ import kotlin.time.Duration.Companion.seconds
 //accepts a string for date anda  string for time then attempts to parse it into an instant.  Returns null if string is formatted wrong
 private fun parseDate(date : String?, time : String? = "00:00") : Instant? {
 
+   val dt = "${date ?: LocalDate.now()}T${time}"
 
-   val dt = "${date ?: LocalDate.now()}T${time}:00"
-
-
-    println(dt)
    return try {
        LocalDateTime.parse(dt).toInstant(TimeZone.UTC)
     } catch (e : Exception) {
@@ -33,9 +30,10 @@ fun InteractionBuilder.bindRemind(manager : DiscordRemainderManager) {
         val time by stringParameter("time", "must be in military time (3pm = 15:00). Default time is midnight",  optional = false)
         val startDate by stringParameter("date","[YYYY-MM-DD] Date the reminder should first appear. Default is today", optional = true)
 
+
         callback {
 
-            val instant = Clock.System.now().plus(5.seconds)
+            val instant = parseDate(startDate,time)
 
             val response : String
 

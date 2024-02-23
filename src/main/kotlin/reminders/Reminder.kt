@@ -1,6 +1,5 @@
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlinx.datetime.*
 import reminders.rennie.IReminder
 import reminders.ReminderListener
 import java.util.EventListener
@@ -15,8 +14,7 @@ open class Reminder(override val title : String, override val desc : String, ove
     private var eventListener : ReminderListener? = null
 
     init {
-
-        val dur : Duration = time.minus(Clock.System.now())
+        val dur : Duration = time.minus(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).toInstant(TimeZone.UTC))
 
         if (dur.isNegative())  throw Exception("date given is in the past: $dur")
 

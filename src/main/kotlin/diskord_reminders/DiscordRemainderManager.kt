@@ -5,12 +5,21 @@ import com.jessecorbett.diskord.api.channel.ChannelClient
 import com.jessecorbett.diskord.internal.client.RestClient
 import com.jessecorbett.diskord.api.channel.Embed
 import com.jessecorbett.diskord.util.sendMessage
+import com.jessecorbett.diskord.util.toTimestamp
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Instant
+
 import reminders.rennie.IReminder
+import java.util.*
+import kotlin.time.Duration.Companion.days
 
 
-fun embedRemainder(rem : IReminder) = Embed(rem.title,rem.desc, timestamp = rem.time.toString())
+fun createEmbedRemainder(rem : IReminder) : Embed {
+
+   val date = rem.time.plus(1.days) //TODO : Figure out why I need to do this to have the embdedd print out the correct time stamp.  (Typically prints a date 1 day before a.k.a yesterday)
+
+    return Embed(rem.title,rem.desc, timestamp = date.toString())
+}
 
 class DiscordRemainderManager(token : String, channelId: String) {
 
@@ -26,7 +35,7 @@ class DiscordRemainderManager(token : String, channelId: String) {
 
     private  fun onReminderFired(reminder : IReminder) {
          runBlocking {
-             channel.sendMessage(embeds = arrayOf(embedRemainder(reminder)))
+             channel.sendMessage(embeds = arrayOf(createEmbedRemainder(reminder)))
          }
     }
     fun addReminder(title : String, desc : String, time : Instant)  = manager.addReminder(title,desc,time)
