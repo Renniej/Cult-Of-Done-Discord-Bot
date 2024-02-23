@@ -1,5 +1,6 @@
 package reminders.diskord_reminders
 
+import Reminder
 import com.jessecorbett.diskord.bot.interaction.InteractionBuilder
 import kotlinx.datetime.*
 import java.time.LocalDate
@@ -38,7 +39,7 @@ fun InteractionBuilder.bindRemind(manager : DiscordRemainderManager) {
             val response : String
 
             if (instant != null) {
-                manager.addReminder(title!!,desc!!, instant)
+                manager.addReminder(Reminder(title!!,desc!!, instant))
                 response = "Reminder Added :)"
 
             } else {

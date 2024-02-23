@@ -50,7 +50,7 @@ fun managerTest() {
 
     val date : Instant = inputDate()
 
-    manager.addReminder(title, desc, date)
+    //manager.addReminder(title, desc, date)
 }
 
 
