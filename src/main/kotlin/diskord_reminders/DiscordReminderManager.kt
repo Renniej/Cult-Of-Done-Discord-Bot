@@ -6,15 +6,15 @@ import com.jessecorbett.diskord.internal.client.RestClient
 import com.jessecorbett.diskord.api.channel.Embed
 import com.jessecorbett.diskord.util.sendMessage
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import reminders.rennie.IReminder
+import java.time.ZoneId
 import kotlin.time.Duration.Companion.days
 
 
 fun createEmbedRemainder(rem : IReminder) : Embed {
-
-   val date = rem.time.plus(1.days) //TODO : Figure out why I need to do this to have the embdedd print out the correct time stamp.  (Typically prints a date 1 day before a.k.a yesterday)
-
-    return Embed(rem.title,rem.desc, timestamp = date.toString())
+    return Embed(rem.title,rem.desc, timestamp = rem.time.toString() ) //note: for timestamp discord automatically converts UTC time to the approperiate when rendering embedded for user
 }
 
 class DiscordRemainderManager(token : String, channelId: String) : ReminderManager() {
@@ -33,6 +33,5 @@ class DiscordRemainderManager(token : String, channelId: String) : ReminderManag
              channel.sendMessage(embeds = arrayOf(createEmbedRemainder(reminder)))
          }
     }
-
 
 }

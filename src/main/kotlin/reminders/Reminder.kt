@@ -25,7 +25,7 @@ open class Reminder(override val title : String, override val desc : String, ove
     open fun start() {
         if (started) throw Exception("This Reminder [$title] has already been started")
 
-        val dur : Duration = time.minus(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).toInstant(TimeZone.UTC))
+        val dur : Duration = time.minus(Clock.System.now())
 
         if (dur.isNegative())  throw Exception("date given is in the past: $dur")
 
