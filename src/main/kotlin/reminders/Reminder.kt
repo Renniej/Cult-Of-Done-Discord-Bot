@@ -18,6 +18,8 @@ open class Reminder(override val title : String, override val desc : String, ove
 
         val dur : Duration = time.minus(Clock.System.now())
 
+        if (dur.isNegative())  throw Exception("date given is in the past: $dur")
+
         timer.schedule(timerTask {fireReminder()
         }, dur.inWholeMilliseconds)
     }
