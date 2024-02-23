@@ -2,11 +2,20 @@ package reminders.reminders
 
 import Reminder
 import kotlinx.datetime.Instant
+import reminders.ReminderListener
 import reminders.rennie.IReminder
+import kotlin.time.Duration
 
-class RecurringReminder(title : String, description : String, date : Instant) : Reminder(title,description,date) {
+
+class RecurringReminder(title : String, description : String, date : Instant, val recurringDuration: Duration) : Reminder(title,description,date) {
 
     private var curReminder = Reminder(title,description,date)
+    private val curReminderListener = ReminderListener()
+
+    init {
+        curReminderListener.setOnReminderFired(this::onCurReminderFired)
+    }
+
     override val title : String
         get() = curReminder.title
     override val  desc : String
@@ -15,10 +24,20 @@ class RecurringReminder(title : String, description : String, date : Instant) : 
         get() = curReminder.time
 
 
+    override fun start() = startCurReminder()
 
-    override fun start() {
+    private fun startCurReminder() {
         curReminder.start()
+        curReminder.setEventListener(curReminderListener)
     }
+
+    private fun createNextReminder() : Reminder = Reminder(curReminder.title, curReminder.desc, curReminder.time.plus(recurringDuration))
+    private fun onCurReminderFired(reminder: IReminder) {
+        super.fireReminder()
+        curReminder = createNextReminder()
+        startCurReminder()
+    }
+
 
     override fun started(): Boolean = curReminder.started()
 

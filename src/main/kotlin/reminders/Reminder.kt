@@ -11,7 +11,7 @@ import kotlin.time.Duration
 open class Reminder(override val title : String, override val desc : String, override val time : Instant,  start: Boolean = false) : IReminder  {
 
     private val timer = Timer()
-    private var eventListener : ReminderListener? = null
+    protected var eventListener : ReminderListener? = null
     private var started = false
 
     init {
@@ -34,11 +34,11 @@ open class Reminder(override val title : String, override val desc : String, ove
     }
 
     open fun started() : Boolean = started
-    fun setEventListener(listener  : ReminderListener) {
+    open fun setEventListener(listener  : ReminderListener) {
         eventListener = listener
     }
 
-    private fun fireReminder(){
+     protected open fun fireReminder(){
         eventListener?.fireReminder(this)
     }
 
