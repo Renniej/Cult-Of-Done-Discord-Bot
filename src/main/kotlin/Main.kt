@@ -10,6 +10,7 @@ import com.jessecorbett.diskord.util.sendMessage
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import reminders.diskord_reminders.DiscordRemainderManager
+import reminders.diskord_reminders.bindRemind
 
 import kotlin.time.Duration.Companion.seconds
 
@@ -71,6 +72,9 @@ fun reminder() = commands("Test") {
 */
 
 
+
+
+
 suspend fun main(args : Array<String>) {
 
     val botToken = args[0]
@@ -81,19 +85,7 @@ suspend fun main(args : Array<String>) {
 
     bot(botToken) {
         interactions {
-            slashCommand("reminder", "sets reminder") {
-                val title by stringParameter("title", "reminder title", optional = false)
-                val desc by stringParameter("description" ,"reminder description", optional = false)
-                callback {
-
-                    manager.addReminder(title!!,desc!!, Clock.System.now().plus(5.seconds))
-
-                    respond {
-                        content = "Reminder Added"
-                    }
-                }
-            }
-
+            bindRemind(manager)
         }
     }
 
