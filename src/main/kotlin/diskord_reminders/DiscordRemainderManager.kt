@@ -18,24 +18,22 @@ fun createEmbedRemainder(rem : IReminder) : Embed {
     return Embed(rem.title,rem.desc, timestamp = date.toString())
 }
 
-class DiscordRemainderManager(token : String, channelId: String) {
+class DiscordRemainderManager(token : String, channelId: String) : ReminderManager() {
 
     private val http = RestClient.default(token)
     private val channel = ChannelClient(channelId, http)
-    private val manager = ReminderManager()
 
     init {
-        manager.setOnReminderFired { reminder ->
+        setOnReminderFired { reminder ->
             this.onReminderFired(reminder)
         }
     }
 
-    private  fun onReminderFired(reminder : IReminder) {
+    override fun onReminderFired(reminder : IReminder) {
          runBlocking {
              channel.sendMessage(embeds = arrayOf(createEmbedRemainder(reminder)))
          }
     }
-    fun addReminder(title : String, desc : String, time : Instant)  = manager.addReminder(title,desc,time)
 
 
 }

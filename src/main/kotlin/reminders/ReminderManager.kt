@@ -13,24 +13,20 @@ open class ReminderManager {
         setOnReminderFired(this@ReminderManager::onReminderFired)
     }
 
-
     //Adds a reminder to the manager and automatically starts it
-    fun addReminder(title : String, desc : String, date : Instant)  {
+    fun addReminder(reminder : Reminder)  {
 
-        val reminder = Reminder(title, desc, date).apply {
-            setEventListener(listener)
-        }
-
+        reminder.setEventListener(listener)
         reminders += reminder
-        reminder.start()
 
+        reminder.start()
     }
 
 
    open fun setOnReminderFired(func : (reminder : IReminder)->Unit) {
         onFiredFunc = func
     }
-    private fun onReminderFired(reminder : IReminder) {
+    protected open fun onReminderFired(reminder : IReminder) {
         this.onFiredFunc?.let { it(reminder) }
     }
 

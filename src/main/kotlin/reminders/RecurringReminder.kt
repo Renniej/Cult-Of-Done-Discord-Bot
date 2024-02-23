@@ -7,9 +7,9 @@ import reminders.rennie.IReminder
 import kotlin.time.Duration
 
 
-class RecurringReminder(title : String, description : String, date : Instant, val recurringDuration: Duration) : Reminder(title,description,date) {
+class RecurringReminder(t : String, d : String, date : Instant, val recurringDuration: Duration) : Reminder(t,d,date) {
 
-    private var curReminder = Reminder(title,description,date)
+    private var curReminder = Reminder(t,d,date)
     private val curReminderListener = ReminderListener()
 
     init {
@@ -38,8 +38,6 @@ class RecurringReminder(title : String, description : String, date : Instant, va
         startCurReminder()
     }
 
-
     override fun started(): Boolean = curReminder.started()
-
 
 }
