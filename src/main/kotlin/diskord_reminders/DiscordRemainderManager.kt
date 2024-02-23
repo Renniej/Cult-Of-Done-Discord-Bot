@@ -5,12 +5,9 @@ import com.jessecorbett.diskord.api.channel.ChannelClient
 import com.jessecorbett.diskord.internal.client.RestClient
 import com.jessecorbett.diskord.api.channel.Embed
 import com.jessecorbett.diskord.util.sendMessage
-import com.jessecorbett.diskord.util.toTimestamp
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Instant
-
 import reminders.rennie.IReminder
-import java.util.*
 import kotlin.time.Duration.Companion.days
 
 

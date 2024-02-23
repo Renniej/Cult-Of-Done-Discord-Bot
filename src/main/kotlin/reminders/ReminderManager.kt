@@ -14,6 +14,7 @@ open class ReminderManager {
     }
 
 
+    //Adds a reminder to the manager and automatically starts it
     fun addReminder(title : String, desc : String, date : Instant)  {
 
         val reminder = Reminder(title, desc, date).apply {
@@ -21,6 +22,7 @@ open class ReminderManager {
         }
 
         reminders += reminder
+        reminder.start()
 
     }
 
