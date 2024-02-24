@@ -9,6 +9,7 @@ import reminders.reminders.RecurringReminder
 import java.time.LocalDate
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 
 //accepts a string for date anda  string for time then attempts to parse it into an instant.  Returns null if string is formatted wrong
@@ -52,7 +53,7 @@ fun InteractionBuilder.bindRemind(manager : DiscordRemainderManager) {
                 else -> {
 
                     val reminder = if (recurring != null && recurring as Boolean)
-                        RecurringReminder(title!!,desc!!, instant, recurringDuration = 1.minutes)
+                        RecurringReminder(title!!,desc!!, instant, recurringDuration = 5.seconds)
                     else
                         Reminder(title!!,desc!!, instant)
 

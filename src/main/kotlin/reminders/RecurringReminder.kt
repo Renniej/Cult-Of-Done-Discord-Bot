@@ -27,8 +27,8 @@ class RecurringReminder(title : String, desc : String, date : Instant, val recur
     override fun start() = startCurReminder()
 
     private fun startCurReminder() {
-        curReminder.start()
         curReminder.setEventListener(curReminderListener)
+        curReminder.start()
     }
 
     private fun createNextReminder() : Reminder = Reminder(curReminder.title, curReminder.desc, curReminder.time.plus(recurringDuration))

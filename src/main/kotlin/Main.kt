@@ -82,14 +82,11 @@ suspend fun main(args : Array<String>) {
     val manager = DiscordRemainderManager(botToken,channelId)
 
 
-
     bot(botToken) {
         interactions {
             bindRemind(manager)
         }
     }
-
-
-
+    
 
 }

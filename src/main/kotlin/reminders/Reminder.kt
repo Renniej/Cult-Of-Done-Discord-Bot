@@ -35,8 +35,9 @@ open class Reminder(override val title : String, override val desc : String, ove
         }, dur.inWholeMilliseconds)
     }
 
+    fun getEventListener() = eventListener
     open fun started() : Boolean = started
-    fun setEventListener(listener  : ReminderListener) {
+     open fun setEventListener(listener  : ReminderListener) {
         eventListener = listener
     }
 
