@@ -6,7 +6,7 @@ import reminders.ReminderListener
 import reminders.rennie.IReminder
 import kotlin.time.Duration
 
-
+//TODO restudy this code because jesus christ you understand none of it LOL. Actually lets do a documentation session rn
 class RecurringReminder(title : String, desc : String, date : Instant, val recurringDuration: Duration) : Reminder(title,desc,date) {
 
     private var curReminder = Reminder(title,desc,date)
