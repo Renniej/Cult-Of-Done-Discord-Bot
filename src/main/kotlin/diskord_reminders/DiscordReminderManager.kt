@@ -15,7 +15,6 @@ import kotlin.time.Duration.Companion.days
 
 
 
-
 class DiscordRemainderManager(token : String, channelId: String) : ReminderManager() {
 
     private val http = RestClient.default(token)

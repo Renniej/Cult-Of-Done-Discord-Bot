@@ -35,11 +35,11 @@ fun InteractionBuilder.bindRemind(manager : DiscordRemainderManager) {
         val title by stringParameter("title", "reminder title", optional = false)
         val desc by stringParameter("description" ,"reminder description", optional = false)
         val time by stringParameter("time", "must be in military time (3pm = 15:00). Default time is midnight",  optional = false)
-        val startDate by stringParameter("date","[YYYY-MM-DD] Date the reminder should first appear. Default is today", optional = false)
+        val date by stringParameter("date","[YYYY-MM-DD] Date the reminder should first appear. Default is today", optional = true)
 
         callback {
 
-            val instant = parseDate(startDate!!,time!!)
+            val instant = parseDate(date ?: LocalDate.now().toString() ,time!!)
 
             val response : String =  when {
                 instant == null -> "Invalid time format ):"
