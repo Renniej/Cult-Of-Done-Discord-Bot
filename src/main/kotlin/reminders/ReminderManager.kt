@@ -14,7 +14,7 @@ open class ReminderManager {
     }
 
     //Adds a reminder to the manager and automatically starts it
-    fun addReminder(reminder : Reminder)  {
+    open fun addReminder(reminder : Reminder)  {
 
         reminder.setEventListener(listener)
         reminders += reminder

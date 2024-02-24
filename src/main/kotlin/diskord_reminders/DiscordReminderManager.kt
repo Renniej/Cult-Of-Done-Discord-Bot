@@ -1,5 +1,6 @@
 package reminders.diskord_reminders
 
+import Reminder
 import ReminderManager
 import com.jessecorbett.diskord.api.channel.ChannelClient
 import com.jessecorbett.diskord.internal.client.RestClient
@@ -26,9 +27,13 @@ class DiscordRemainderManager(token : String, channelId: String) : ReminderManag
         }
     }
 
+    override fun addReminder(reminder : Reminder)  = super.addReminder(reminder.toDiscordReminder())
+
     override fun onReminderFired(reminder : IReminder) {
          runBlocking {
-             channel.sendMessage(embeds = arrayOf(createEmbedRemainder(reminder)))
+             val discordReminder = reminder as DiscordReminder
+             val embed = discordReminder.embed()
+             channel.sendMessage(embeds = arrayOf(embed))
          }
     }
 
