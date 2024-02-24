@@ -13,9 +13,7 @@ import java.time.ZoneId
 import kotlin.time.Duration.Companion.days
 
 
-fun createEmbedRemainder(rem : IReminder) : Embed {
-    return Embed(rem.title,rem.desc, timestamp = rem.time.toString() ) //note: for timestamp discord automatically converts UTC time to the approperiate when rendering embedded for user
-}
+
 
 class DiscordRemainderManager(token : String, channelId: String) : ReminderManager() {
 
