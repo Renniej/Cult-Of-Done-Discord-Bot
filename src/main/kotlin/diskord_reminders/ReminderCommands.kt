@@ -5,6 +5,7 @@ import com.jessecorbett.diskord.api.channel.Embed
 import com.jessecorbett.diskord.bot.BotContext
 import com.jessecorbett.diskord.bot.interaction.InteractionBuilder
 import kotlinx.datetime.*
+import reminders.reminders.RecurringReminder
 import java.time.LocalDate
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -36,7 +37,9 @@ fun InteractionBuilder.bindRemind(manager : DiscordRemainderManager) {
         val title by stringParameter("title", "reminder title", optional = false)
         val desc by stringParameter("description" ,"reminder description", optional = false)
         val time by stringParameter("time", "must be in military time (3pm = 15:00). Default time is midnight",  optional = false)
+        val recurring by booleanParameter("recurring", "reminder will repeat every minute (Default : False)")
         val date by stringParameter("date","[YYYY-MM-DD] Default is today's date", optional = true)
+
 
         callback {
 
@@ -47,7 +50,14 @@ fun InteractionBuilder.bindRemind(manager : DiscordRemainderManager) {
                 instant == null -> "Invalid time format ):"
                 !instant.isIntTheFuture() -> "reminder was set for the past ):"
                 else -> {
-                    manager.addReminder(Reminder(title!!,desc!!, instant))
+
+                    val reminder = if (recurring != null && recurring as Boolean)
+                        RecurringReminder(title!!,desc!!, instant, recurringDuration = 1.minutes)
+                    else
+                        Reminder(title!!,desc!!, instant)
+
+                    manager.addReminder(reminder)
+
                     "Reminder Added :)"
                 }
             }
