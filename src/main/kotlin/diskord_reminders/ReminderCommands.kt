@@ -1,6 +1,7 @@
 package reminders.diskord_reminders
 
 import Reminder
+import com.jessecorbett.diskord.api.channel.Embed
 import com.jessecorbett.diskord.bot.BotContext
 import com.jessecorbett.diskord.bot.interaction.InteractionBuilder
 import kotlinx.datetime.*
@@ -51,6 +52,7 @@ fun InteractionBuilder.bindRemind(manager : DiscordRemainderManager) {
 
 
             respond {
+
                 content = response
             }
 
