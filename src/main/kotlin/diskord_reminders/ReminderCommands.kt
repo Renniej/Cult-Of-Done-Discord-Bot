@@ -8,37 +8,54 @@ import reminders.reminders.RecurringReminder
 import java.time.LocalDate
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
-import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 private val MIN_RECURRING = 5.seconds
 private val MAX_RECURRING = 365.days
 
-private val RECURRING_RANGE = MIN_RECURRING..MAX_RECURRING // A reminder can only be printing for a min of
+private val RECURRING_RANGE = MAX_RECURRING..MIN_RECURRING// A reminder can only be printing for a min of
 
 
 //accepts a string for date anda  string for time then attempts to parse it into an instant.  Returns null if string is formatted wrong
-private fun parseDate(date : String, time : String = "00:00") : Instant? {
+
+
+private fun parseDate(str : String, timeZone: TimeZone) : String {
+
+    return try {
+        val duration = Duration.parse(str.substringAfter('+'))
+          Clock.System.now().plus(duration).toLocalDateTime(timeZone).date.toString()
+    } catch (e : Exception) {
+        "invalid"
+    }
+
+}
+
+private fun parseTime(str : String,timeZone: TimeZone) : String{
+    return try {
+        val duration = Duration.parse(str.substringAfter('+'))
+        Clock.System.now().plus(duration).toLocalDateTime(timeZone).time.toString()
+    } catch (e : Exception) {
+        "invalid"
+    }
+}
+
+private fun parseDateTime(date : String, time : String = "00:00") : Instant? {
 
     val timeZone = TimeZone.currentSystemDefault()
 
-   val dt = if (date.first() == '+') {
-       try {
-           val duration = Duration.parse(date.substringAfter('+'))
-           Clock.System.now().plus(duration).toString()
-
-       } catch (e : Exception) {
-           "invalid"
-       }
-
-   } else {
-       "${date}T${time}"
-   }
+    val strDate =  if (date.first() == '+')
+        parseDate(date,timeZone)
+    else
+        date
 
 
-   return try {
-       LocalDateTime.parse(dt).toInstant(timeZone)
+    val strTime = if (time.first() == '+')
+        parseTime(time,timeZone)
+    else
+        time
+
+    return try {
+       LocalDateTime.parse("${strDate}T${strTime}").toInstant(timeZone)
     } catch (e : Exception) {
         null
     }
@@ -49,9 +66,33 @@ private fun parseDate(date : String, time : String = "00:00") : Instant? {
 fun Instant.isIntTheFuture() : Boolean = this > Clock.System.now()
 
 
-fun isValidDuration(d : Duration) : Boolean {
+private fun isValidDuration(d : Duration) : Boolean {
     return (d > Duration.ZERO && d in RECURRING_RANGE )
 }
+
+
+private fun hasError(dateTime : Instant?, recurInterval : String?, recDuration: Duration? ) : String? {
+    return when {
+        recurInterval != null && recDuration == null -> "wrong recurring time format"
+        recDuration != null && isValidDuration(recDuration)-> "recurring duration cannot be 0 or lower"
+        dateTime == null -> "Invalid time format ):"
+        !dateTime.isIntTheFuture() -> "reminder was set for the past ):"
+        else -> null
+    }
+}
+
+fun addReminder(manager: DiscordRemainderManager, title : String, desc : String, dateTime : Instant, recDuration: Duration?) : String {
+
+    val reminder = if (recDuration != null )
+        RecurringReminder(title,desc, dateTime, recurringDuration = recDuration)  //hasError function checks for all of these
+    else
+        Reminder(title,desc, dateTime)
+
+    manager.addReminder(reminder.toDiscordReminder())
+
+    return "Reminder Added :)"
+}
+
 fun InteractionBuilder.bindRemind(manager : DiscordRemainderManager) {
 
     slashCommand("reminder", "sets reminder") {
@@ -64,32 +105,15 @@ fun InteractionBuilder.bindRemind(manager : DiscordRemainderManager) {
 
         callback {
 
-            val instant : Instant? = parseDate(date ?: LocalDate.now().toString() ,time!!)
+            val instant : Instant? = parseDateTime(date ?: LocalDate.now().toString() ,time!!) //date and time reminder should pop off
 
-            val recDuration : Duration? = try {
+            val recDuration : Duration? = try { //at which interval a reminder should pop off if it is recurring
                 Duration.parse(recurInterval ?: "invalid")
             }  catch (e :Exception) {
                 null
             }
 
-            val response : String =  when {
-                recurInterval != null && recDuration == null -> "wrong recurring time format"
-                recDuration != null && isValidDuration(recDuration)-> "recurring duration cannot be 0 or lower"
-                instant == null -> "Invalid time format ):"
-                !instant.isIntTheFuture() -> "reminder was set for the past ):"
-                else -> {
-
-                    val reminder = if (recDuration != null )
-                        RecurringReminder(title!!,desc!!, instant, recurringDuration = recDuration)
-                    else
-                        Reminder(title!!,desc!!, instant)
-
-
-                    manager.addReminder(reminder.toDiscordReminder())
-                    "Reminder Added :)"
-                }
-            }
-
+            val response : String = hasError(instant,recurInterval,recDuration) ?: addReminder(manager, title!!, desc!!,instant!!,recDuration)
 
             respond {
                 embeds = listOf(Embed(response))
