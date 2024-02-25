@@ -47,7 +47,7 @@ fun InteractionBuilder.bindRemind(manager : DiscordRemainderManager) {
         val title by stringParameter("title", "reminder title", optional = false)
         val desc by stringParameter("description" ,"reminder description", optional = false)
         val time by stringParameter("time", "must be in military time (3pm = 15:00). Default time is midnight",  optional = false)
-        val recurInterval by stringParameter("recurring", " [ OPTIONAL ] interval that reminder should repeat. Input Examples : \"1h 30m 10s\" , \"1.5h\" , \"3d\"", optional = false)
+        val recurInterval by stringParameter("recurring", " [ OPTIONAL ] interval that reminder should repeat. Input Examples : \"1h 30m 10s\" , \"1.5h\" , \"3d\"", optional = true)
 
         val date by stringParameter("date"," +5days or [YYYY-MM-DD] Default is today's date", optional = true)
 
