@@ -21,9 +21,20 @@ private val RECURRING_RANGE = MIN_RECURRING..MAX_RECURRING // A reminder can onl
 //accepts a string for date anda  string for time then attempts to parse it into an instant.  Returns null if string is formatted wrong
 private fun parseDate(date : String, time : String = "00:00") : Instant? {
 
-   val dt = "${date}T${time}"
-   val timeZone = TimeZone.currentSystemDefault()
+    val timeZone = TimeZone.currentSystemDefault()
 
+   val dt = if (date.first() == '+') {
+       try {
+           val duration = Duration.parse(date.substringAfter('+'))
+           Clock.System.now().plus(duration).toString()
+
+       } catch (e : Exception) {
+           "invalid"
+       }
+
+   } else {
+       "${date}T${time}"
+   }
 
 
    return try {
@@ -48,7 +59,6 @@ fun InteractionBuilder.bindRemind(manager : DiscordRemainderManager) {
         val desc by stringParameter("description" ,"reminder description", optional = false)
         val time by stringParameter("time", "must be in military time (3pm = 15:00). Default time is midnight",  optional = false)
         val recurInterval by stringParameter("recurring", " [ OPTIONAL ] interval that reminder should repeat. Input Examples : \"1h 30m 10s\" , \"1.5h\" , \"3d\"", optional = true)
-
         val date by stringParameter("date"," +5days or [YYYY-MM-DD] Default is today's date", optional = true)
 
 
