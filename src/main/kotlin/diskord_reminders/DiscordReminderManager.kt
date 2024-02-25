@@ -27,6 +27,7 @@ class DiscordRemainderManager(token : String, channelId: String) : ReminderManag
     }
 
     override fun addReminder(reminder : Reminder)  = super.addReminder(reminder.toDiscordReminder())
+    fun addReminder(discordReminder: DiscordReminder) = super.addReminder(discordReminder)
 
     override fun onReminderFired(reminder : IReminder) {
          runBlocking {
