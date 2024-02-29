@@ -13,6 +13,8 @@ dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.2.1")
     implementation("com.jessecorbett:diskord-bot:5.3.0")
+    implementation("dev.kord:kord-core:0.13.1")
+
 }
 
 test {
