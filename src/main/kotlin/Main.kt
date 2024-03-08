@@ -1,11 +1,9 @@
 package reminders
 
 import ReminderManager
-import com.jessecorbett.diskord.api.channel.ChannelClient
-import com.jessecorbett.diskord.bot.bot
-import com.jessecorbett.diskord.bot.interaction.interactions
-import com.jessecorbett.diskord.internal.client.RestClient
-import com.jessecorbett.diskord.util.sendMessage
+import dev.kord.core.Kord
+import dev.kord.core.behavior.channel.BaseVoiceChannelBehavior
+import io.ktor.network.sockets.*
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -81,12 +79,10 @@ suspend fun main(args : Array<String>) {
     val channelId = "1209964221253812334"
     val manager = DiscordRemainderManager(botToken,channelId)
 
+    val kord= Kord(botToken)
 
-    bot(botToken) {
-        interactions {
-            bindRemind(manager)
-        }
-    }
-    
+    kord.login()
+
+
 
 }

@@ -1,9 +1,13 @@
 package reminders.diskord_reminders
 
 import Reminder
-import com.jessecorbett.diskord.api.channel.Embed
-import com.jessecorbett.diskord.bot.interaction.InteractionBuilder
+import dev.kord.common.entity.Snowflake
+import dev.kord.core.Kord
+import dev.kord.rest.builder.interaction.string
+
+import isIntTheFuture
 import kotlinx.datetime.*
+import parseDateTime
 import reminders.reminders.RecurringReminder
 import java.time.LocalDate
 import kotlin.time.Duration
@@ -16,54 +20,9 @@ private val MAX_RECURRING = 365.days
 private val RECURRING_RANGE = MAX_RECURRING..MIN_RECURRING// A reminder can only be printing for a min of
 
 
-//accepts a string for date anda  string for time then attempts to parse it into an instant.  Returns null if string is formatted wrong
 
 
-private fun parseDate(str : String, timeZone: TimeZone) : String {
 
-    return try {
-        val duration = Duration.parse(str.substringAfter('+'))
-          Clock.System.now().plus(duration).toLocalDateTime(timeZone).date.toString()
-    } catch (e : Exception) {
-        "invalid"
-    }
-
-}
-
-private fun parseTime(str : String,timeZone: TimeZone) : String{
-    return try {
-        val duration = Duration.parse(str.substringAfter('+'))
-        Clock.System.now().plus(duration).toLocalDateTime(timeZone).time.toString()
-    } catch (e : Exception) {
-        "invalid"
-    }
-}
-
-private fun parseDateTime(date : String, time : String = "00:00") : Instant? {
-
-    val timeZone = TimeZone.currentSystemDefault()
-
-    val strDate =  if (date.first() == '+')
-        parseDate(date,timeZone)
-    else
-        date
-
-
-    val strTime = if (time.first() == '+')
-        parseTime(time,timeZone)
-    else
-        time
-
-    return try {
-       LocalDateTime.parse("${strDate}T${strTime}").toInstant(timeZone)
-    } catch (e : Exception) {
-        null
-    }
-
-}
-
-
-fun Instant.isIntTheFuture() : Boolean = this > Clock.System.now()
 
 
 private fun isValidDuration(d : Duration) : Boolean {
@@ -93,9 +52,24 @@ fun addReminder(manager: DiscordRemainderManager, title : String, desc : String,
     return "Reminder Added :)"
 }
 
-fun InteractionBuilder.bindRemind(manager : DiscordRemainderManager) {
+suspend fun Kord.bindRemind(manager : DiscordRemainderManager) {
+
+
+
+    createGlobalChatInputCommand(name = "reminder", description = "sets reminder") {
+
+        string("title", "title of reminder") { required = true }
+        string("description", "description of rmeinder") {required = true}
+        string("time", "must be in military time (3pm = 15:00). Default time is midnight") {required = true}
+
+        string("recurring"," [ OPTIONAL ] interval that reminder should repeat. Input Examples : \"1h 30m 10s\" , \"1.5h\" , \"3d\"", )
+        string("date", "+5days or [YYYY-MM-DD] Default is today's date")
+
+    }
+
 
     slashCommand("reminder", "sets reminder") {
+
         val title by stringParameter("title", "reminder title", optional = false)
         val desc by stringParameter("description" ,"reminder description", optional = false)
         val time by stringParameter("time", "must be in military time (3pm = 15:00). Default time is midnight",  optional = false)
@@ -105,7 +79,10 @@ fun InteractionBuilder.bindRemind(manager : DiscordRemainderManager) {
 
         callback {
 
-            val instant : Instant? = parseDateTime(date ?: LocalDate.now().toString() ,time!!) //date and time reminder should pop off
+            val dateStr = date ?: LocalDate.now().toString()
+            val timeStr = time ?: "00:00"
+
+            val instant : Instant? = parseDateTime(dateStr ,timeStr) //date and time reminder should pop off
 
             val recDuration : Duration? = try { //at which interval a reminder should pop off if it is recurring
                 Duration.parse(recurInterval ?: "invalid")
@@ -113,7 +90,7 @@ fun InteractionBuilder.bindRemind(manager : DiscordRemainderManager) {
                 null
             }
 
-            val response : String = hasError(instant,recurInterval,recDuration) ?: addReminder(manager, title!!, desc!!,instant!!,recDuration)
+            val response : String = hasError(instant,recurInterval,recDuration) ?: addReminder(manager, title!!, desc!!,instant!!,recDuration) //discord ensures these are passed before sending it
 
             respond {
                 embeds = listOf(Embed(response))
